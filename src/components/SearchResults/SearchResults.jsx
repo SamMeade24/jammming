@@ -1,9 +1,9 @@
 import React from "react";
 import TrackList from "../TrackList/TrackList";
 
-function SearchResults() {
+function SearchResults({ tracks }) {
     return (
-        <div clasName="search-results">
+        <div className="search-results">
             <h2>Search Results</h2>
             <TrackList tracks={tracks} />
         </div>
