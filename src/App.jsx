@@ -23,11 +23,16 @@ function App() {
     // Checks if the track is already within the playlist
     if (playlistTracks.some((savedTrack) => savedTrack.id === track.id)) {
       return; // Prevents duplication
-    }
+    };
 
     // Adds a new track to the playlist
     setPlaylistTracks((prevTracks) => [...prevTracks, track]);
-  }
+  };
+
+  function removeTrack(track) {
+    // Removes track from the playlist
+    setPlaylistTracks((prevTracks) => prevTracks.filter((savedTrack)=> savedTrack.id !== track.id));
+  };
   
   return(
     <div className="App">
@@ -39,7 +44,7 @@ function App() {
         <SearchResults tracks={mockTracks} onAdd={addTrack} />
 
         {/* Playlist component for mock playlist */}
-        <Playlist playlistName={playlistName} tracks={playlistTracks} />
+        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} />
 
       </div>
     </div>
