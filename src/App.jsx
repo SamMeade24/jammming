@@ -12,6 +12,13 @@ function App() {
     { id: 3, name: "Red & Cream", artist: "MadeByMeade", album: "Brand Sound" }, 
   ];
   
+  // Mock data for testing Playlist rendering
+  const [playlistName, setPlaylistName] = useState("My Playlist");
+  const [playlistTracks, setPlaylistTracks] = useState([
+    { id: 4, name: "Code Flow", artist: "Sam", album: "React Basics" }, 
+    { id: 5, name: "Debugging Beats", artist: "Meade", album: "JS Essentials" }, 
+  ]);
+  
   return(
     <div className="App">
       <h1>Jamming</h1>
@@ -21,8 +28,8 @@ function App() {
         {/* Search results with mock tracks */}
         <SearchResults tracks={mockTracks}/>
 
-        {/* Playlist component for future steps */}
-        <Playlist />
+        {/* Playlist component for mock playlist */}
+        <Playlist playlistName={playlistName} tracks={playlistTracks} />
 
       </div>
     </div>

@@ -1,9 +1,11 @@
 import React from "react";
+import TrackList from "../TrackList/TrackList";
 
-function Playlist() {
+function Playlist({ playlistName, tracks }) {
     return (
         <div className="playlist">
-            <h2>Playlist</h2>
+            <h2>{playlistName}</h2>
+            <TrackList tracks={tracks} />
         </div>
     );
 };
