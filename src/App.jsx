@@ -33,6 +33,10 @@ function App() {
     // Removes track from the playlist
     setPlaylistTracks((prevTracks) => prevTracks.filter((savedTrack)=> savedTrack.id !== track.id));
   };
+
+  function updatePlaylistName(name) {
+    setPlaylistName(name);
+  };
   
   return(
     <div className="App">
@@ -44,7 +48,7 @@ function App() {
         <SearchResults tracks={mockTracks} onAdd={addTrack} />
 
         {/* Playlist component for mock playlist */}
-        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} />
+        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} />
 
       </div>
     </div>

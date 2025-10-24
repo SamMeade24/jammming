@@ -4,7 +4,7 @@ import TrackList from "../TrackList/TrackList";
 function Playlist({ playlistName, tracks, onRemove }) {
     return (
         <div className="playlist">
-            <h2>{playlistName}</h2>
+            <input type="text" value={playlistName} onChange={(e) => onNameChange(e.target.value)} />
             <TrackList tracks={tracks} onRemove={onRemove} />
         </div>
     );
