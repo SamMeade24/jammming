@@ -1,8 +1,9 @@
-import React, {useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import SearchResults from "./components/SearchResults/SearchResults";
 import Playlist from "./components/Playlist/Playlist";
+import Spotify from "./services/Spotify";
 
 function App() {
   // Mock data for testing TrackList and Track rendering
@@ -18,6 +19,13 @@ function App() {
     { id: 4, name: "Code Flow", artist: "Sam", album: "React Basics" }, 
     { id: 5, name: "Debugging Beats", artist: "Meade", album: "JS Essentials" }, 
   ]);
+
+  const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    const token = Spotify.getAccessToken();
+    console.log(token);
+  }, []);
 
   function addTrack(track) {
     // Checks if the track is already within the playlist
@@ -46,7 +54,7 @@ function App() {
   return(
     <div className="App">
       <h1>Jamming</h1>
-      <SearchBar />
+      <SearchBar onSearch={(term) => console.log("Searching for:", term)} />
 
       <div className="App-playlist">
         {/* Search results with mock tracks */}
