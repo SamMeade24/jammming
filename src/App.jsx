@@ -16,8 +16,8 @@ function App() {
   // Mock data for testing Playlist rendering
   const [playlistName, setPlaylistName] = useState("My Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([
-    { id: 4, name: "Code Flow", artist: "Sam", album: "React Basics" }, 
-    { id: 5, name: "Debugging Beats", artist: "Meade", album: "JS Essentials" }, 
+    { id: 4, name: "Code Flow", artist: "Sam", album: "React Basics", uri: "spotify:track:104" }, 
+    { id: 5, name: "Debugging Beats", artist: "Meade", album: "JS Essentials", uri: "spotify:track:105" }, 
   ]);
 
   const [searchResults, setSearchResults] = useState([]);
@@ -26,6 +26,10 @@ function App() {
     const token = Spotify.getAccessToken();
     console.log(token);
   }, []);
+
+  function search(term) {
+    Spotify.search(term).then(results => setSearchResults(results));
+  };
 
   function addTrack(track) {
     // Checks if the track is already within the playlist
@@ -54,11 +58,11 @@ function App() {
   return(
     <div className="App">
       <h1>Jamming</h1>
-      <SearchBar onSearch={(term) => console.log("Searching for:", term)} />
+      <SearchBar onSearch={search} />
 
       <div className="App-playlist">
         {/* Search results with mock tracks */}
-        <SearchResults tracks={mockTracks} onAdd={addTrack} />
+        <SearchResults tracks={searchResults} onAdd={addTrack} />
 
         {/* Playlist component for mock playlist */}
         <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} onSave={savePlaylist} />
