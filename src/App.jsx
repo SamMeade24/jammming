@@ -37,6 +37,11 @@ function App() {
   function updatePlaylistName(name) {
     setPlaylistName(name);
   };
+
+  function savePlaylist() {
+    const trackURIs = playlistTracks.map(track => track.uri);
+    console.log("Saving Playlist:", playlistName, trackURIs);
+  };
   
   return(
     <div className="App">
@@ -48,7 +53,7 @@ function App() {
         <SearchResults tracks={mockTracks} onAdd={addTrack} />
 
         {/* Playlist component for mock playlist */}
-        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} />
+        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} onSave={savePlaylist} />
 
       </div>
     </div>
