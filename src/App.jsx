@@ -6,27 +6,19 @@ import Playlist from "./components/Playlist/Playlist";
 import Spotify from "./services/Spotify";
 
 function App() {
-  // Mock data for testing TrackList and Track rendering
-  const mockTracks = [
-    { id: 1, name: "Tidal Wave", artist: "Meade", album: "MadeByMeade" }, 
-    { id: 2, name: "Crafted Code", artist: "Sam Meade", album: "Portfolio" }, 
-    { id: 3, name: "Red & Cream", artist: "MadeByMeade", album: "Brand Sound" }, 
-  ];
-  
-  // Mock data for testing Playlist rendering
-  const [playlistName, setPlaylistName] = useState("My Playlist");
-  const [playlistTracks, setPlaylistTracks] = useState([
-    { id: 4, name: "Code Flow", artist: "Sam", album: "React Basics", uri: "spotify:track:104" }, 
-    { id: 5, name: "Debugging Beats", artist: "Meade", album: "JS Essentials", uri: "spotify:track:105" }, 
-  ]);
-
   const [searchResults, setSearchResults] = useState([]);
+  const [playlistName, setPlaylistName] = useState("My Playlist");
+  const [playlistTracks, setPlaylistTracks] = useState([]);
 
   useEffect(() => {
-    const token = Spotify.getAccessToken();
-    console.log(token);
+    async function initSpotify() {
+      const token = await Spotify.getAccessToken();
+      console.log("Spotify access token:", token);
+    }
+  
+    initSpotify();
   }, []);
-
+  
   function search(term) {
     Spotify.search(term).then(results => setSearchResults(results));
   };
