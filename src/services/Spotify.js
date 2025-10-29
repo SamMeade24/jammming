@@ -81,12 +81,20 @@ const Spotify = {
 
     async getAccessToken() {
         if (accessToken) return accessToken;
-    
-        const token = await this.getTokenFromCode();
-        if (token) return token;
+      
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+      
+        if (code) {
+            const token = await this.getTokenFromCode();
+            if (token) {
+            window.history.replaceState({}, document.title, "/");
+            return token;
+          }
+        }
     
         await this.redirectToAuth();
-    }, 
+    },  
 
     async search(term) {
         const token = await this.getAccessToken();
