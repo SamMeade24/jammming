@@ -114,6 +114,90 @@ const Spotify = {
             uri: track.uri,
         }));
     },
+
+    // Get's the user's Spotify profile to obtain user ID
+    async getCurrentUserId() {
+        const token = await this.getAccessToken();
+        if (!token) throw new Error('No Spotify access token');
+
+        const res = await fetch('https://api.spotify.com/v1/me', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(`Failed to get user: ${res.status} ${res.statusText} ${err.error?.message || ''}`);
+        }
+        const data = await res.json();
+        return data.id;
+    },
+    
+    // Create's a playlist for the user
+    async createPlaylist(userId,name = 'New Playlist', description = '', isPublic = false) {
+        const token = await this.getAccessToken();
+        if (!token) throw new Error('No Spotify access token');
+
+        const body = {
+            name: name, 
+            description: description, 
+            public: !!isPublic
+        };
+
+        const res = await fetch(`https://api.spotify.com/v1/users/${encodeURIComponent(userId)}/playlists`, {
+            method: 'POST', 
+            headers: {
+                Authorization: `Bearer ${token}`, 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body) 
+        });
+
+        if(!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(`Create playlist failed: ${res.status} ${res.statusText} ${err.error?.message || ''}`);
+        }
+
+        const data = await res.json();
+        return data;
+    }, 
+
+    // Adds tracks to a Playlist
+    async addTracksToPlaylist(playlistId, uris = []) {
+        if(!Array.isArray(uris) || uris.length === 0) {
+            return null;
+        }
+        const token = await this.getAccessToken();
+        if (!token) throw new Error(`No Spotify access token`);
+
+        const res = await fetch(`https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`, {
+            method: 'POST', 
+            headers: {
+                Authorization: `Bearer ${token}`, 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ uris }) 
+        });
+
+        if(!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(`Create playlist failed: ${res.status} ${res.statusText} ${err.error?.message || ''}`);
+        }
+        
+        const data = await res.json();
+        return data;
+    }, 
+
+    // Create & add tracks
+    async savePlaylistToSpotify(playlistName, trackUris = [], { description = 'Created with Jammming', isPublic = false } = {}) {
+        if(!playlistName || !Array.isArray(trackUris) || trackUris.length === 0) {
+            throw new Error('A playlist name is needed and non-empty track URIs');
+        }
+
+        const userId = await this.getCurrentUserId();
+        const playlist = await this.createPlaylist(userId, playlistName, description, isPublic);
+        await this.addTracksToPlaylist(playlist.id, trackUris);
+
+        return playlist;
+    }, 
 };
 
 export default Spotify;

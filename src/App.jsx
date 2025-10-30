@@ -9,6 +9,8 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [playlistName, setPlaylistName] = useState("My Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
     async function initSpotify() {
@@ -42,9 +44,36 @@ function App() {
     setPlaylistName(name);
   };
 
-  function savePlaylist() {
-    const trackURIs = playlistTracks.map(track => track.uri);
-    console.log("Saving Playlist:", playlistName, trackURIs);
+  async function savePlaylist() {
+    if (!playlistName || playlistTracks.length === 0) {
+      setSaveMessage('A playlist name and at least one track is required. ');
+      return;
+    }
+
+    const trackUris = playlistTracks.map(t => t.uri).filter(Boolean);
+    if (trackUris.length === 0) {
+      setSaveMessage('Tracks need URIS to be saved to Spotify.');
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage('');
+
+    try {
+      const playlist = await Spotify.savePlaylistToSpotify(playlistName, trackUris, {
+        description: 'Created with Jammming', 
+        isPublic: false
+      });
+
+      setPlaylistName('My Playlist');
+      setPlaylistTracks([]);
+      setSaveMessage(`Saved to Spotify: ${playlist.name}`);
+    } catch (err) {
+      console.error('Save playlist error:', err);
+      setSaveMessage(`Failed to Save: ${err.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
   
   return(
