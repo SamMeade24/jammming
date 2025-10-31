@@ -20,6 +20,10 @@ function App() {
   
     initSpotify();
   }, []);
+
+  useEffect(() => {
+    console.log("playlistName state changed:", playlistName);
+  }, [playlistName]);
   
   function search(term) {
     Spotify.search(term).then(results => setSearchResults(results));
@@ -42,6 +46,7 @@ function App() {
 
   function updatePlaylistName(name) {
     setPlaylistName(name);
+    console.log("Playlist name updated:", name);
   };
 
   async function savePlaylist() {
