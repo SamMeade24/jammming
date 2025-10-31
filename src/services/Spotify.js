@@ -71,7 +71,6 @@ const Spotify = {
             expiresIn = data.expires_in;
             return accessToken;
         } else {
-            console.error("Spotify token exchange failed:", data);
             return null;
         }
     },
@@ -105,7 +104,6 @@ const Spotify = {
         });
 
         if (response.status === 401) {
-            console.warn("Access token expired. Refreshing...");
             token = await this.getAccessToken();
 
             if (token) {
@@ -113,7 +111,6 @@ const Spotify = {
                     headers: { Authorization: `Bearer ${token}` }, 
                 });
             } else {
-                console.error("Failed to refresh access token. Please log in again.");
                 return [];
             }
         }
@@ -219,7 +216,6 @@ const Spotify = {
 async function refreshAccessToken() {
     const refreshToken = localStorage.getItem("refresh_token");
     if (!refreshToken) {
-        console.error("No refresh token has been found. You need to re-autenticate. ");
         return null;
     }
 
@@ -246,7 +242,6 @@ async function refreshAccessToken() {
     const data = await response.json();
     accessToken = data.access_token;
     localStorage.setItem("spotify_access_token", accessToken);
-    console.log("Access token refreshed!");
     return data.access_token;
 }
 

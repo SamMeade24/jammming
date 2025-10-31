@@ -15,15 +15,12 @@ function App() {
   useEffect(() => {
     async function initSpotify() {
       const token = await Spotify.getAccessToken();
-      console.log("Spotify access token:", token);
     }
   
     initSpotify();
   }, []);
 
-  useEffect(() => {
-    console.log("playlistName state changed:", playlistName);
-  }, [playlistName]);
+  useEffect(() => {}, [playlistName]);
   
   function search(term) {
     Spotify.search(term).then(results => setSearchResults(results));
@@ -46,7 +43,6 @@ function App() {
 
   function updatePlaylistName(name) {
     setPlaylistName(name);
-    console.log("Playlist name updated:", name);
   };
 
   async function savePlaylist() {
