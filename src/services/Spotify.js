@@ -66,7 +66,8 @@ const Spotify = {
 
         if (data.access_token) {
             accessToken = data.access_token;
-            localStorage.setItem("spotify_access_token", accessToken); // persist token
+            localStorage.setItem("refresh_token", data.refresh_token);
+            localStorage.setItem("spotify_access_token", accessToken);
             expiresIn = data.expires_in;
             return accessToken;
         } else {
@@ -94,26 +95,40 @@ const Spotify = {
     },
 
     async search(term) {
-        const token = await this.getAccessToken();
+        let token = await this.getAccessToken();
         if (!token) return [];
 
-        const response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(term)}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(term)}`;
+
+        let response = await fetch(searchUrl, {
+            headers: { Authorization: `Bearer ${token}` }, 
         });
+
+        if (response.status === 401) {
+            console.warn("Access token expired. Refreshing...");
+            token = await this.getAccessToken();
+
+            if (token) {
+                response = await fetch(searchUrl, {
+                    headers: { Authorization: `Bearer ${token}` }, 
+                });
+            } else {
+                console.error("Failed to refresh access token. Please log in again.");
+                return [];
+            }
+        }
 
         const data = await response.json();
         if (!data.tracks) return [];
 
         return data.tracks.items.map(track => ({
-            id: track.id,
-            name: track.name,
-            artist: track.artists[0].name,
-            album: track.album.name,
-            uri: track.uri,
+            id: track.id, 
+            name: track.name, 
+            artist: track.artists[0].name, 
+            album: track.album.name, 
+            uri: track.uri, 
         }));
-    },
+    }, 
 
     // Get's the user's Spotify profile to obtain user ID
     async getCurrentUserId() {
@@ -199,5 +214,40 @@ const Spotify = {
         return playlist;
     }, 
 };
+
+// Refreshes the access token
+async function refreshAccessToken() {
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (!refreshToken) {
+        console.error("No refresh token has been found. You need to re-autenticate. ");
+        return null;
+    }
+
+    const clientId = "a1f18c7bf8f544a6a4bca7e1605f8230";
+    const body = new URLSearchParams({
+        grant_type: "refresh_token", 
+        refresh_token: refreshToken, 
+        client_id: clientId
+    });
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST", 
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }, 
+        body: body.toString()
+    });
+
+    if (!response.ok) {
+        console.error("Failed to refresh access token")
+        return null;
+    }
+
+    const data = await response.json();
+    accessToken = data.access_token;
+    localStorage.setItem("spotify_access_token", accessToken);
+    console.log("Access token refreshed!");
+    return data.access_token;
+}
 
 export default Spotify;
