@@ -50,8 +50,13 @@ function App() {
   };
 
   async function savePlaylist() {
-    if (!playlistName || playlistTracks.length === 0) {
-      setSaveMessage('A playlist name and at least one track is required. ');
+    if (!playlistName) {
+      setSaveMessage(`A playlist name is required`);
+      return;
+    }
+
+    if (playlistTracks.length === 0) {
+      setSaveMessage(`A playlist must have tracks.`);
       return;
     }
 
