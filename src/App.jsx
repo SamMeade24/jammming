@@ -91,8 +91,8 @@ function App() {
         <SearchResults tracks={searchResults} onAdd={addTrack} />
 
         {/* Playlist component for mock playlist */}
-        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} onSave={savePlaylist} />
-
+        <Playlist playlistName={playlistName} tracks={playlistTracks} onRemove={removeTrack} onNameChange={updatePlaylistName} onSave={savePlaylist} isSaving={isSaving} saveMessage={saveMessage} />
+          
       </div>
     </div>
   );
